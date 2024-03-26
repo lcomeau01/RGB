@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>RGB Converter</title>
+    
+</head>
+<body>
+    <h1>RGB Converter</h1>
+    <section class="form-container">
+        <section class="content">
+            <!-- HTML THAT WILL CHANGE WHEN REQUEST IS GRANTED -->
+            <form method="get" id="form" action="#">
+                <p>RGB: </p>
+                <input type="number" id="red">
+                <input type="number" id="green">
+                <input type="number" id="blue">
+                <input type="button" value="Convert" id="button1">
+            </form>
+            <section class="color-info">
+                <div class="label">
+                    <p id="square"></p>
+                    <p class="color-text"> <b id="Name"> White </b> </p>
+                </div>
+                <div class="color-types">
+                    <p class="color-text"  id="hsl-value"> <b>HSL Value: </b> hsl(0, 0%, 100%) </p>
+                    <p class="color-text"  id="hex-value"> <b>Hex Value: </b> #FFFFFF </p>
+                    <p class="color-text"  id="hsv-value"> <b>HSV Value: </b> hsv(0, 0%, 100%) </p>
+                </div>
+                <div class="color-types">
+                    <p class="color-text" id="cmyk-value"> <b>CMYK Value: </b> cmyk(0, 0, 0, 0) </p>
+                    <p class="color-text"  id="xyz-value"> <b>XYZ Value: </b> XYZ(95, 100, 108.883) </p>
+                </div>
+            </section>
+        </section>
+    </section>
+    <!-- JAVASCRIPT -->
+    <script>
+        window.onload = function() { 
+            button = document.getElementById("button1"); 
+            button.onclick = function() { 
+                getColors(); 
+            }
+        }
+        function getColors() { 
+            red = validateColor(document.getElementById("red").value); 
+            green = validateColor(document.getElementById("green").value); 
+            blue = validateColor(document.getElementById("blue").value); 
+
+            color = red + "," + green + "," + blue; 
+
+            colorSquare = document.getElementById("square"); 
+            colorSquare.style.backgroundColor = "rgb(" + color + ")"; 
+
+            fetchData(color); 
+        }
+        function validateColor(value) { 
+            if (value > 255) return 255; 
+            else if (value < 0 || value == "") return 0; 
+            else return value; 
+        }
+
+        function fetchData(color) { 
+            url = "https://www.thecolorapi.com/id?rgb=" + color; 
+            res = fetch(url)
+            .then (res => res.text())
+            .then (data =>
+                {
+                    data = JSON.parse(data);  
+                    hex = data.hex.value;
+                    document.getElementById("hex-value").innerHTML = "<b>Hex Value: </b>" + hex; 
+
+                    name = data.name.value; 
+                    document.getElementById("Name").innerHTML = name; 
+
+                    hsl = data.hsl.value; 
+                    document.getElementById("hsl-value").innerHTML = "<b>HSL Value: </b>" + hsl; 
+
+                    hsv = data.hsv.value; 
+                    document.getElementById("hsv-value").innerHTML = "<b>HSV Value: </b>" + hsv; 
+
+                    cmyk = data.cmyk.value; 
+                    document.getElementById("cmyk-value").innerHTML = "<b>CMYK Value: </b>" + cmyk; 
+
+                    xyz = data.xyz.value; 
+                    document.getElementById("xyz-value").innerHTML = "<b>XYZ Value: </b>" + xyz; 
+                })
+            .catch (error => console.log("this didn't work: " + error)); 
+        } 
+</script>
+</body>
+</html>
